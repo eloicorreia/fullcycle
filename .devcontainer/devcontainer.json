@@ -7,6 +7,7 @@
 	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
 	"dockerComposeFile": [
 		"../docker-compose.yml",
+		"../docker-compose.override.yml",
 		"docker-compose.yml"
 	],
 
@@ -16,7 +17,16 @@
 
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
-	"workspaceFolder": "/home/node/app"
+	"workspaceFolder": "/home/node/app",
+
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "zsh"
+			}	
+		}
+	}
+
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
