@@ -72,16 +72,19 @@ describe("Category Unit Tests", () => {
         ]
 
         data.forEach( i => {
-            let category = new Category(i.props, i.id as any);
+            const category = new Category(i.props, i.id);  
             expect(category.id).not.toBeNull();
-            expect(category.id).toBeInstanceOf(UniqueEntityid);   
+            expect(category.uniqueEntityid).toBeInstanceOf(UniqueEntityid);   
         });
 
     });
 
-    test('get of name field', () => {
+    test('get and setter of name field', () => {
         const category = new Category({name: 'Movie'});
         expect(category.name).toBe('Movie');
+
+        category["name"] = "other name";
+        expect(category.name).toBe("other name");
     });
 
     test('get and setter of description field', () => {
@@ -153,6 +156,13 @@ describe("Category Unit Tests", () => {
 
 
     });
+
+    it("should update a category", () => {
+        const category = new Category({ name: "Movie" });
+        category.update("Documentary", "some description");
+        expect(category.name).toBe("Documentary");
+        expect(category.description).toBe("some description");
+    })
 
 });
 

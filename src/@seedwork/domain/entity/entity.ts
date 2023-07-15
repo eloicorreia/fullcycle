@@ -7,7 +7,7 @@ export default abstract class Entity<Props> {
         this.uniqueEntityid = id || new UniqueEntityid();     
     }
 
-    get id():string {
+    get id(): string {
         return this.uniqueEntityid.value;
     }
 
