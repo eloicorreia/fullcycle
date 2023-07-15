@@ -162,7 +162,27 @@ describe("Category Unit Tests", () => {
         category.update("Documentary", "some description");
         expect(category.name).toBe("Documentary");
         expect(category.description).toBe("some description");
-    })
+    });
+
+    it("should active a category", () => {
+        const category = new Category({
+            name: "Movies",
+            is_active: false
+        });
+
+        category.active();
+        expect(category.is_active).toBeTruthy();
+    });
+
+    it("should active a category", () => {
+        const category = new Category({
+            name: "Movies",
+            is_active: true
+        });
+
+        category.deactivate();
+        expect(category.is_active).toBeFalsy();
+    });
 
 });
 
