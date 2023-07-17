@@ -4,11 +4,14 @@ import { omit } from 'lodash';
 
 describe("Category Unit Tests", () => {
 
-    test('constructor of category', () => {
+    beforeEach(() => {
+        Category.validate = jest.fn(); // Sobrescreve a função validate para não ser chamada e não dar erro
+    });
+
+    test('constructor of category', () => {        
         let category = new Category({name: 'Movie'});
-
         let props = omit(category.props, 'created_at');
-
+        expect(Category.validate).toHaveBeenCalled(); // Verifica se foi chamado -> mesmo em com sobrecarga deve ser chamado.
         expect(props).toStrictEqual({
             name: 'Movie', 
             description: null, 
@@ -160,6 +163,7 @@ describe("Category Unit Tests", () => {
     it("should update a category", () => {
         const category = new Category({ name: "Movie" });
         category.update("Documentary", "some description");
+        expect(Category.validate).toHaveBeenCalledTimes(2);
         expect(category.name).toBe("Documentary");
         expect(category.description).toBe("some description");
     });
