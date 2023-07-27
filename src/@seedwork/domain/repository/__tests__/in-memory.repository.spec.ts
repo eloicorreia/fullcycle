@@ -1,7 +1,7 @@
-import Entity from '../entity/entity';
-import NotFoundError from '../errors/not-found.error';
-import UniqueEntityid from '../value-objects/unique-entity-id.vo';
-import { InMemoryRepository } from './in-memory.repository';
+import Entity from '../../entity/entity';
+import NotFoundError from '../../errors/not-found.error';
+import UniqueEntityid from '../../value-objects/unique-entity-id.vo';
+import { InMemoryRepository } from '../in-memory.repository';
 
 type StubEntityProps = {
     name: string;
@@ -61,7 +61,7 @@ describe('InMemoryRepository Unit Tests', () => {
         );
     });
 
-    it('shoud updates an entity', async () => {
+    it('should updates an entity', async () => {
         const entity = new StubEntity({name: "name value", price: 5});
         await repository.insert(entity);
 
@@ -83,7 +83,7 @@ describe('InMemoryRepository Unit Tests', () => {
         );
     });
 
-    it('shoud delete an entity', async () => {
+    it('should delete an entity', async () => {
         let entity = new StubEntity({name: "name value", price: 5});
         await repository.insert(entity);
 

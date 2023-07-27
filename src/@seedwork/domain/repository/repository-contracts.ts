@@ -19,14 +19,14 @@ export type SearchProps<Filter = string> = {
     filter?: Filter | null;
 }
 
-export class SearchParams {
+export class SearchParams<Filter = string> {
     protected _page: number;
     protected _per_page: number = 15;
     protected _sort: string | null;
     protected _sort_dir: SortDirection | null;
-    protected _filter: string | null;
+    protected _filter: Filter | null;
  
-    constructor(props: SearchProps = {}) {
+    constructor(props: SearchProps<Filter> = {}) {
         this.page = props.page;
         this.per_page = props.per_page;
         this.sort = props.sort;
@@ -56,12 +56,12 @@ export class SearchParams {
         this._per_page = _per_page;
     }
 
-    get sort() { return this._sort; }
+    get sort(): string | null { return this._sort; }
     private set sort(value: string | null) {
         this._sort = value === null || value === undefined || value === "" ? null : `${value}`;
     }
 
-    get sort_dir() { return this._sort_dir }
+    get sort_dir(): SortDirection | null { return this._sort_dir }
     private set sort_dir(value: string | null ) {
         if (!this._sort) {
             this._sort_dir = null;
@@ -71,13 +71,13 @@ export class SearchParams {
         this._sort_dir = dir !== "asc" && dir!=="desc" ? "asc" : dir;
     }
 
-    get filter() { return this._filter }
-    private set filter(value: string | null ) {
-        this._filter = value === null || value === undefined || value === "" ? null : `${value}`;
+    get filter(): Filter | null { return this._filter }
+    private set filter(value: Filter | null ) {
+        this._filter = value === null || value === undefined || (value as unknown) === "" ? null : (`${value}` as any);
     }
 }
 
-type SearchResultProps<E extends Entity, Filter> = {
+type SearchResultProps<E extends Entity, Filter = string> = {
     items: E[];
     total: number;
     current_page: number;
@@ -95,7 +95,7 @@ export class SearchResult<E extends Entity = Entity, Filter = string> {
     readonly last_page: number;
     readonly sort: string | null;
     readonly sort_dir: string | null;
-    readonly filter: Filter;
+    readonly filter: Filter | null;
   
     constructor(props: SearchResultProps<E, Filter>) {
         this.items = props.items;
@@ -122,6 +122,12 @@ export class SearchResult<E extends Entity = Entity, Filter = string> {
     }
 }
 
-export interface SearchableRepositoryInterface<E extends Entity, SearchInput = SearchParams, SearchOutput = SearchResult> extends RepositoryInterface<E>{
+export interface SearchableRepositoryInterface<
+    E extends Entity, 
+    Filter = string,
+    SearchInput = SearchParams, 
+    SearchOutput = SearchResult<E> 
+> extends RepositoryInterface<E>{
+    sortableFields: string[];
     search(props: SearchInput): Promise<SearchOutput>;
 }
