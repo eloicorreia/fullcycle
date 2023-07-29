@@ -36,4 +36,5 @@ describe('object Unit Tests', () => {
 
     expect(obj.deep.prop3).toBeInstanceOf(Date);
   });
+
 });

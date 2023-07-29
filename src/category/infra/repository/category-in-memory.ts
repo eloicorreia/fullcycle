@@ -1,6 +1,6 @@
-import { Category } from "category/domain/entities/category";
+import { Category } from "../../domain/entities/category";
 import { InMemorySearchableRepository } from "../../../@seedwork/domain/repository/in-memory.repository";
-import CategoryRepository from "category/domain/repository/CategoryRepository";
+import CategoryRepository from "../../domain/repository/category.repository"
 
 
 export default class CategoryInMemoryRepository 

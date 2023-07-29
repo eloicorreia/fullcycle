@@ -26,9 +26,9 @@ function assertIsValid(expected: ExpectedRule) {
     }).not.toThrow(expected.error);    
 }
 
-function runRule({value, property, rule, error, params = []}: Omit<ExpectedRule, "error">) {
+function runRule({value, property, rule, params = []}: Omit<ExpectedRule, "error">) {
     const validator = ValidatorRules.values(value, property);
-    const method = validator[rule];
+    const method = validator[rule] as (...args: any[]) => ValidatorRules;
     method.apply(validator, params); 
 }
 
