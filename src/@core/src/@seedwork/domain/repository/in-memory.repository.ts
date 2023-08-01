@@ -1,11 +1,16 @@
-import { RepositoryInterface, SearchParams, SearchProps, SearchResult, SearchableRepositoryInterface, SortDirection } from "./repository-contracts";
+import {
+    RepositoryInterface,
+    SearchParams,
+    SearchProps,
+    SearchResult,
+    SearchableRepositoryInterface,
+    SortDirection
+} from "./repository-contracts";
 import Entity from "../entity/entity";
 import UniqueEntityid from "../value-objects/unique-entity-id.vo";
 import NotFoundError from "../errors/not-found.error";
 
-
 export abstract class InMemoryRepository<E extends Entity> implements RepositoryInterface<E> {
-
     items: E[] = [];
 
     async insert(entity: E extends Entity<any> ? any : any): Promise<void> {
@@ -20,33 +25,31 @@ export abstract class InMemoryRepository<E extends Entity> implements Repository
     }
     async update(entity: E extends Entity<any> ? any : any): Promise<void> {
         await this._get(entity.id);
-        const indexFound = this.items.findIndex(i => i.id === entity.id);
+        const indexFound = this.items.findIndex((i) => i.id === entity.id);
         this.items[indexFound] = entity;
     }
     async delete(id: string | UniqueEntityid): Promise<void> {
         const _id = `${id}`;
         await this._get(_id);
-        const indexFound = this.items.findIndex(i => i.id === _id);
+        const indexFound = this.items.findIndex((i) => i.id === _id);
         this.items.splice(indexFound, 1);
     }
 
     protected async _get(id: string): Promise<E> {
-        const item = this.items.find(i => i.id === id);
+        const item = this.items.find((i) => i.id === id);
 
-        if(!item) {
+        if (!item) {
             throw new NotFoundError(`Entity Not Found using ID ${id}`);
         }
 
         return item;
     }
-
 }
 
-
-export abstract class InMemorySearchableRepository<E extends Entity> 
-    extends InMemoryRepository<E> 
-    implements SearchableRepositoryInterface<E> {
-
+export abstract class InMemorySearchableRepository<E extends Entity>
+    extends InMemoryRepository<E>
+    implements SearchableRepositoryInterface<E>
+{
     sortableFields: string[];
 
     async search(props: SearchProps): Promise<SearchResult<E>> {
@@ -61,24 +64,22 @@ export abstract class InMemorySearchableRepository<E extends Entity>
             per_page: props.per_page,
             sort: props.sort,
             sort_dir: props.sort_dir,
-            filter: props.filter,
+            filter: props.filter
         });
     }
 
-    protected abstract applyFilter(
-        items: E[], 
-        filter: string | null): Promise<E[]>;
+    protected abstract applyFilter(items: E[], filter: string | null): Promise<E[]>;
 
     protected async applySort(
         items: E[],
         sort: string | null,
         sort_dir: SortDirection | null,
-        custom_getter?: (sort: string, item: E) => any): Promise<E[]> {
-
+        custom_getter?: (sort: string, item: E) => any
+    ): Promise<E[]> {
         if (!sort || !this.sortableFields.includes(sort)) {
             return items;
         }
-    
+
         return [...items].sort((a, b) => {
             const aValue = custom_getter ? custom_getter(sort, a) : a.props[sort];
             const bValue = custom_getter ? custom_getter(sort, b) : b.props[sort];
@@ -92,14 +93,9 @@ export abstract class InMemorySearchableRepository<E extends Entity>
         });
     }
 
-    protected async applyPaginate(
-        items: E[],
-        page: SearchParams["page"],
-        per_page: SearchParams["per_page"]
-    ): Promise<E[]> {
-        const start = (page - 1) * per_page; 
-        const limit = start + per_page; 
+    protected async applyPaginate(items: E[], page: SearchParams["page"], per_page: SearchParams["per_page"]): Promise<E[]> {
+        const start = (page - 1) * per_page;
+        const limit = start + per_page;
         return items.slice(start, limit);
     }
-
 }

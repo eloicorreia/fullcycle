@@ -1,3 +1,3 @@
-// created from 'create-ts-index'
+// created from "create-ts-index"
 
-export * from './objects';
+export * from "./objects";

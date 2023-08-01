@@ -10,8 +10,7 @@ export type CategoryProperties = {
 };
 
 export class Category extends Entity<CategoryProperties> {
-
-    constructor(public readonly props: CategoryProperties, id?: UniqueEntityid) {   
+    constructor(public readonly props: CategoryProperties, id?: UniqueEntityid) {
         super(props, id);
         Category.validate(props);
 
@@ -41,7 +40,7 @@ export class Category extends Entity<CategoryProperties> {
     deactivate() {
         this.props.is_active = false;
     }
-        
+
     get name() {
         return this.props.name;
     }
@@ -69,6 +68,4 @@ export class Category extends Entity<CategoryProperties> {
     get created_at() {
         return this.props.created_at;
     }
-
 }
-

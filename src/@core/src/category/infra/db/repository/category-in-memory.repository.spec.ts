@@ -1,4 +1,4 @@
-import { Category } from "../../domain/entities/category";
+import { Category } from "../../../domain/entities/category";
 import CategoryInMemoryRepository from "./category-in-memory.repository";
 
 describe("CategoryInMemoryRepository", () => {
@@ -6,10 +6,8 @@ describe("CategoryInMemoryRepository", () => {
 
     beforeEach(() => (repository = new CategoryInMemoryRepository()));
 
-    it('should no filter items when filter object is null', async () => {
-        const items:Category[] = [
-            new Category({name: "test"})
-        ];
+    it("should no filter items when filter object is null", async () => {
+        const items: Category[] = [new Category({ name: "test" })];
         const spyFilter = jest.spyOn(items, "filter" as any);
 
         const itemsFiltered: Category[] = await repository["applyFilter"](items, null);
@@ -17,15 +15,11 @@ describe("CategoryInMemoryRepository", () => {
         expect(itemsFiltered).toStrictEqual(itemsFiltered);
     });
 
-    it("should filter items using filter parameter", async() => {
-        const items: Category[] = [
-            new Category({ name: "test" }),
-            new Category({ name: "TEST" }),
-            new Category({ name: "fake "})
-        ];
+    it("should filter items using filter parameter", async () => {
+        const items: Category[] = [new Category({ name: "test" }), new Category({ name: "TEST" }), new Category({ name: "fake " })];
 
         const spyFilter = jest.spyOn(items, "filter" as any);
-        let itemsFiltered = await repository["applyFilter"](items, "TEST");
+        const itemsFiltered = await repository["applyFilter"](items, "TEST");
         expect(spyFilter).toHaveBeenCalledTimes(1);
         expect(itemsFiltered).toStrictEqual([items[0], items[1]]);
     });
@@ -33,21 +27,17 @@ describe("CategoryInMemoryRepository", () => {
     it("should sort by created_at when sort param is null", async () => {
         const created_at = new Date();
         const items: Category[] = [
-            new Category({name: "test", created_at: created_at}),
-            new Category({name: "TEST", created_at: new Date(created_at.getTime() + 100)}),
-            new Category({name: "TEST", created_at: new Date(created_at.getTime() + 200)})
+            new Category({ name: "test", created_at: created_at }),
+            new Category({ name: "TEST", created_at: new Date(created_at.getTime() + 100) }),
+            new Category({ name: "TEST", created_at: new Date(created_at.getTime() + 200) })
         ];
 
-        let itemsSorted = await repository["applySort"](items, null, null);
+        const itemsSorted = await repository["applySort"](items, null, null);
         expect(itemsSorted).toStrictEqual([items[2], items[1], items[0]]);
     });
 
-    it('should sort by name', async () => {
-        const items = [
-            new Category({ name: "c" }),
-            new Category({ name: "b" }),
-            new Category({ name: "a" })
-        ];
+    it("should sort by name", async () => {
+        const items = [new Category({ name: "c" }), new Category({ name: "b" }), new Category({ name: "a" })];
 
         let itemsSorted = await repository["applySort"](items, "name", "asc");
         expect(itemsSorted).toStrictEqual([items[2], items[1], items[0]]);
