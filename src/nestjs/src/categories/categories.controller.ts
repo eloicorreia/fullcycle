@@ -3,12 +3,13 @@ import {
     DeleteCategoryUseCase,
     GetCategoryUseCase,
     ListCategoriesUseCase,
-    UpdateCategoryUseCase,
+    UpdateCategoryUseCase
 } from "@fc/micro-videos/category/application";
 import { Controller, Get, Post, Body, Param, Delete, Inject, Put, HttpCode, Query } from "@nestjs/common";
-import { CreateCategoryDto } from "./dto/create-category.dto"
-import { UpdateCategoryDto } from "./dto/update-category.dto"
+import { CreateCategoryDto } from "./dto/create-category.dto";
 import { SearchCategoryDto } from "./dto/search-category.dto";
+import { UpdateCategoryDto } from "./dto/update-category.dto";
+import { CategoryCollectionPresenter, CategoryPresenter } from "./presenter/category.presenter";
 
 @Controller("categories")
 export class CategoriesController {
@@ -28,31 +29,35 @@ export class CategoriesController {
     private listUseCase: ListCategoriesUseCase.UseCase;
 
     @Post()
-    create(@Body() createCategoryDto: CreateCategoryDto) {
-        return this.createUseCase.execute(createCategoryDto);
+    async create(@Body() createCategoryDto: CreateCategoryDto) {
+        const output = await this.createUseCase.execute(createCategoryDto);
+        return new CategoryPresenter(output);
     }
 
     @Get()
-    search(@Query() searchParams: SearchCategoryDto) {
-        return this.listUseCase.execute(searchParams);
+    async search(@Query() searchParams: SearchCategoryDto) {
+        const output = await this.listUseCase.execute(searchParams);
+        return new CategoryCollectionPresenter(output);
     }
 
     @Get(":id")
-    findOne(@Param("id") id: string) {
-        return this.getUseCase.execute({ id })
+    async findOne(@Param("id") id: string) {
+        const output = await this.getUseCase.execute({ id });
+        return new CategoryPresenter(output);
     }
 
     @Put(":id")
-    update(@Param("id") id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-        return this.updateUseCase.execute({
+    async update(@Param("id") id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
+        const output = await this.updateUseCase.execute({
             id,
             ...updateCategoryDto
-        })
+        });
+        return new CategoryPresenter(output);
     }
 
-    @Delete(":id")
     @HttpCode(204)
+    @Delete(":id")
     remove(@Param("id") id: string) {
-        return this.deleteUseCase.execute({ id })
+        return this.deleteUseCase.execute({ id });
     }
 }

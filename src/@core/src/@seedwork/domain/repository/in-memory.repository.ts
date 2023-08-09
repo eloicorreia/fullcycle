@@ -1,34 +1,35 @@
-import {
-    RepositoryInterface,
-    SearchParams,
-    SearchProps,
-    SearchResult,
-    SearchableRepositoryInterface,
-    SortDirection
-} from "./repository-contracts";
 import Entity from "../entity/entity";
-import UniqueEntityid from "../value-objects/unique-entity-id.vo";
 import NotFoundError from "../errors/not-found.error";
+import UniqueEntityId from "../value-objects/unique-entity-id.vo";
+import { RepositoryInterface, SearchableRepositoryInterface, SearchParams, SearchResult, SortDirection } from "./repository-contracts";
 
 export abstract class InMemoryRepository<E extends Entity> implements RepositoryInterface<E> {
     items: E[] = [];
 
-    async insert(entity: E extends Entity<any> ? any : any): Promise<void> {
+    async insert(entity: E): Promise<void> {
         this.items.push(entity);
     }
-    async findById(id: string | UniqueEntityid): Promise<E extends Entity<any> ? any : any> {
+
+    async bulkInsert(entities: E[]): Promise<void> {
+        this.items.push(...entities);
+    }
+
+    async findById(id: string | UniqueEntityId): Promise<E> {
         const _id = `${id}`;
         return this._get(_id);
     }
-    async findAll(): Promise<(E extends Entity<any> ? any : any)[]> {
+
+    async findAll(): Promise<E[]> {
         return this.items;
     }
-    async update(entity: E extends Entity<any> ? any : any): Promise<void> {
+
+    async update(entity: E): Promise<void> {
         await this._get(entity.id);
         const indexFound = this.items.findIndex((i) => i.id === entity.id);
         this.items[indexFound] = entity;
     }
-    async delete(id: string | UniqueEntityid): Promise<void> {
+
+    async delete(id: string | UniqueEntityId): Promise<void> {
         const _id = `${id}`;
         await this._get(_id);
         const indexFound = this.items.findIndex((i) => i.id === _id);
@@ -37,11 +38,9 @@ export abstract class InMemoryRepository<E extends Entity> implements Repository
 
     protected async _get(id: string): Promise<E> {
         const item = this.items.find((i) => i.id === id);
-
         if (!item) {
             throw new NotFoundError(`Entity Not Found using ID ${id}`);
         }
-
         return item;
     }
 }
@@ -50,13 +49,12 @@ export abstract class InMemorySearchableRepository<E extends Entity>
     extends InMemoryRepository<E>
     implements SearchableRepositoryInterface<E>
 {
-    sortableFields: string[];
+    sortableFields: string[] = [];
 
-    async search(props: SearchProps): Promise<SearchResult<E>> {
+    async search(props: SearchParams): Promise<SearchResult<E>> {
         const itemsFiltered = await this.applyFilter(this.items, props.filter);
         const itemsSorted = await this.applySort(itemsFiltered, props.sort, props.sort_dir);
         const itemsPaginated = await this.applyPaginate(itemsSorted, props.page, props.per_page);
-
         return new SearchResult({
             items: itemsPaginated,
             total: itemsFiltered.length,
@@ -70,26 +68,21 @@ export abstract class InMemorySearchableRepository<E extends Entity>
 
     protected abstract applyFilter(items: E[], filter: string | null): Promise<E[]>;
 
-    protected async applySort(
-        items: E[],
-        sort: string | null,
-        sort_dir: SortDirection | null,
-        custom_getter?: (sort: string, item: E) => any
-    ): Promise<E[]> {
+    protected async applySort(items: E[], sort: string | null, sort_dir: SortDirection | null): Promise<E[]> {
         if (!sort || !this.sortableFields.includes(sort)) {
             return items;
         }
 
         return [...items].sort((a, b) => {
-            const aValue = custom_getter ? custom_getter(sort, a) : a.props[sort];
-            const bValue = custom_getter ? custom_getter(sort, b) : b.props[sort];
-            if (aValue < bValue) {
+            if (a.props[sort] < b.props[sort]) {
                 return sort_dir === "asc" ? -1 : 1;
-            } else if (aValue > bValue) {
-                return sort_dir === "asc" ? 1 : -1;
-            } else {
-                return 0;
             }
+
+            if (a.props[sort] > b.props[sort]) {
+                return sort_dir === "asc" ? 1 : -1;
+            }
+
+            return 0;
         });
     }
 

@@ -1,5 +1,4 @@
-const fc_micro_videos_path =
-  '<rootDir>/../../../node_modules/@fc/micro-videos/dist';
+const fc_micro_videos_path = "<rootDir>/../../../node_modules/@fc/micro-videos/dist";
 
 export default {
   displayName: {
@@ -18,12 +17,7 @@ export default {
   testEnvironment: 'node',
   moduleNameMapper: {
     '@fc/micro\\-videos/(.*)$': `${fc_micro_videos_path}/$1`,
-    //'#seedwork/domain': '<rootDir>/../../../node_modules/@fc/micro-videos/dist/@seedwork/domain/index.js',
-    //TODO - vamos ver depois
     '#seedwork/(.*)$': `${fc_micro_videos_path}/@seedwork/$1`,
-    //'#category/domain': '<rootDir>/../../../node_modules/@fc/micro-videos/dist/category/domain/index.js',
-    //vamos ver mais tarde se é necessário
-    //TODO - vamos ver depois
     '#category/(.*)$': `${fc_micro_videos_path}/category/$1`,
     '#cast-member/(.*)$': `${fc_micro_videos_path}/cast-member/$1`,
   },

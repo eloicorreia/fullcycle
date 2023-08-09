@@ -1,6 +1,6 @@
 import Entity from "../../entity/entity";
 import NotFoundError from "../../errors/not-found.error";
-import UniqueEntityid from "../../value-objects/unique-entity-id.vo";
+import UniqueEntityId from "../../value-objects/unique-entity-id.vo";
 import { InMemoryRepository } from "../in-memory.repository";
 
 type StubEntityProps = {
@@ -25,7 +25,7 @@ describe("InMemoryRepository Unit Tests", () => {
     it("should throws error when entity not found", async () => {
         await expect(repository.findById("fake id")).rejects.toThrow(new NotFoundError(`Entity Not Found using ID fake id`));
 
-        await expect(repository.findById(new UniqueEntityid("94b421e3-c60b-4b07-a947-590176bf827e"))).rejects.toThrow(
+        await expect(repository.findById(new UniqueEntityId("94b421e3-c60b-4b07-a947-590176bf827e"))).rejects.toThrow(
             new NotFoundError(`Entity Not Found using ID 94b421e3-c60b-4b07-a947-590176bf827e`)
         );
     });
@@ -37,7 +37,7 @@ describe("InMemoryRepository Unit Tests", () => {
         let entityFound = await repository.findById(entity.id);
         expect(entityFound.toJSON()).toStrictEqual(repository.items[0].toJSON());
 
-        entityFound = await repository.findById(entity.uniqueEntityid);
+        entityFound = await repository.findById(entity.uniqueEntityId);
         expect(entityFound.toJSON()).toStrictEqual(repository.items[0].toJSON());
     });
 
@@ -59,7 +59,7 @@ describe("InMemoryRepository Unit Tests", () => {
         const entity = new StubEntity({ name: "name value", price: 5 });
         await repository.insert(entity);
 
-        const entityUpdate = new StubEntity({ name: "updated", price: 1 }, entity.uniqueEntityid);
+        const entityUpdate = new StubEntity({ name: "updated", price: 1 }, entity.uniqueEntityId);
 
         await repository.update(entityUpdate);
 
@@ -69,7 +69,7 @@ describe("InMemoryRepository Unit Tests", () => {
     it("should throws error on delete when entity not found", () => {
         expect(repository.delete("fake id")).rejects.toThrow(new NotFoundError(`Entity Not Found using ID fake id`));
 
-        expect(repository.delete(new UniqueEntityid("94b421e3-c60b-4b07-a947-590176bf827e"))).rejects.toThrow(
+        expect(repository.delete(new UniqueEntityId("94b421e3-c60b-4b07-a947-590176bf827e"))).rejects.toThrow(
             new NotFoundError(`Entity Not Found using ID 94b421e3-c60b-4b07-a947-590176bf827e`)
         );
     });
@@ -84,7 +84,7 @@ describe("InMemoryRepository Unit Tests", () => {
         entity = new StubEntity({ name: "name value", price: 5 });
         await repository.insert(entity);
 
-        await repository.delete(entity.uniqueEntityid);
+        await repository.delete(entity.uniqueEntityId);
         expect(repository.items).toHaveLength(0);
     });
 });

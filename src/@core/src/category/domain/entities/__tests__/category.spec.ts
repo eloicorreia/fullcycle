@@ -1,16 +1,16 @@
-import UniqueEntityid from "#seedwork/domain/value-objects/unique-entity-id.vo";
-import { Category, CategoryProperties } from "./category";
+import UniqueEntityId from "#seedwork/domain/value-objects/unique-entity-id.vo";
+import { Category, CategoryProperties } from "../category";
 import { omit } from "lodash";
 
 describe("Category Unit Tests", () => {
     beforeEach(() => {
-        Category.validate = jest.fn(); // Sobrescreve a função validate para não ser chamada e não dar erro
+        Category.validate = jest.fn();
     });
 
     test("constructor of category", () => {
         let category = new Category({ name: "Movie" });
         const props = omit(category.props, "created_at");
-        expect(Category.validate).toHaveBeenCalled(); // Verifica se foi chamado -> mesmo em com sobrecarga deve ser chamado.
+        expect(Category.validate).toHaveBeenCalled();
         expect(props).toStrictEqual({
             name: "Movie",
             description: null,
@@ -63,19 +63,19 @@ describe("Category Unit Tests", () => {
     });
 
     describe("id field", () => {
-        type CategoryData = { props: CategoryProperties; id?: UniqueEntityid };
+        type CategoryData = { props: CategoryProperties; id?: UniqueEntityId };
 
         const arrange: CategoryData[] = [
             { props: { name: "Movie" } },
             { props: { name: "Movie" }, id: null },
             { props: { name: "Movie" }, id: undefined },
-            { props: { name: "Movie" }, id: new UniqueEntityid() }
+            { props: { name: "Movie" }, id: new UniqueEntityId() }
         ];
 
         test.each(arrange)("when props is %j", (item) => {
             const category = new Category(item.props, item.id);
             expect(category.id).not.toBeNull();
-            expect(category.uniqueEntityid).toBeInstanceOf(UniqueEntityid);
+            expect(category.uniqueEntityId).toBeInstanceOf(UniqueEntityId);
         });
     });
 

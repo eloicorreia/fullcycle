@@ -1,5 +1,5 @@
-import CreateCategoryUseCase from "../create-category.use-case"
-import CategoryInMemoryRepository from "../../../infra/db/repository/category-in-memory.repository";
+import CreateCategoryUseCase from "#category/application/use-cases/create-category.use-case";
+import CategoryInMemoryRepository from "#category/infra/db/repository/category-in-memory.repository";
 
 describe("CreateCategoryUseCase Unit tests", () => {
     let useCase: CreateCategoryUseCase.UseCase;
@@ -10,26 +10,26 @@ describe("CreateCategoryUseCase Unit tests", () => {
         useCase = new CreateCategoryUseCase.UseCase(repository);
     });
 
-    it('should create a category', async () => {
-        const spyInsert = jest.spyOn(repository, 'insert');
-        let output = await useCase.execute({name: 'teste'});
+    it("should create a category", async () => {
+        const spyInsert = jest.spyOn(repository, "insert");
+        let output = await useCase.execute({ name: "teste" });
         expect(spyInsert).toHaveBeenCalledTimes(1);
         expect(output).toStrictEqual({
             id: repository.items[0].id,
-            name: 'teste',
+            name: "teste",
             description: null,
             is_active: true,
             created_at: repository.items[0].created_at
         });
 
-        output = await useCase.execute({name: 'teste', description: 'some description', is_active: false});
+        output = await useCase.execute({ name: "teste", description: "some description", is_active: false });
         expect(spyInsert).toHaveBeenCalledTimes(2);
         expect(output).toStrictEqual({
             id: repository.items[1].id,
-            name: 'teste',
-            description: 'some description',
+            name: "teste",
+            description: "some description",
             is_active: false,
             created_at: repository.items[1].created_at
         });
-    })
-})
+    });
+});

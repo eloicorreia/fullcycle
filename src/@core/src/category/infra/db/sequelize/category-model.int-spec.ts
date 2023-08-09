@@ -1,6 +1,8 @@
-import { DataType } from "sequelize-typescript";
-import { CategoryModel } from "./category-model";
 import { setupSequelize } from "#seedwork/infra/testing/helpers/db";
+import { DataType } from "sequelize-typescript";
+import { CategorySequelize } from "./category-sequelize";
+
+const { CategoryModel } = CategorySequelize;
 
 describe("CategoryModel Unit Tests", () => {
     setupSequelize({ models: [CategoryModel] });
@@ -8,7 +10,6 @@ describe("CategoryModel Unit Tests", () => {
     test("mapping props", () => {
         const attributesMap = CategoryModel.getAttributes();
         const attributes = Object.keys(CategoryModel.getAttributes());
-
         expect(attributes).toStrictEqual(["id", "name", "description", "is_active", "created_at"]);
 
         const idAttr = attributesMap.id;
@@ -43,8 +44,8 @@ describe("CategoryModel Unit Tests", () => {
             type: DataType.BOOLEAN()
         });
 
-        const createdAt = attributesMap.created_at;
-        expect(createdAt).toMatchObject({
+        const createdAtAttr = attributesMap.created_at;
+        expect(createdAtAttr).toMatchObject({
             field: "created_at",
             fieldName: "created_at",
             allowNull: false,
@@ -52,14 +53,13 @@ describe("CategoryModel Unit Tests", () => {
         });
     });
 
-    it("create", async () => {
+    test("create", async () => {
         const arrange = {
-            id: "7f4c4163-2a16-4039-bf67-c9b110a6d8c3",
+            id: "9366b7dc-2d71-4799-b91c-c64adb205104",
             name: "test",
             is_active: true,
             created_at: new Date()
         };
-
         const category = await CategoryModel.create(arrange);
         expect(category.toJSON()).toStrictEqual(arrange);
     });

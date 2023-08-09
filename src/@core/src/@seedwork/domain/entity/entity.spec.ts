@@ -1,4 +1,4 @@
-import UniqueEntityid from "../value-objects/unique-entity-id.vo";
+import UniqueEntityId from "../value-objects/unique-entity-id.vo";
 import Entity from "./entity";
 import { validate as uuidValidate } from "uuid";
 
@@ -9,23 +9,23 @@ describe("Entity Unit Tests", () => {
         const arrange = { prop1: "prop1 value", prop2: 10 };
         const entity = new StubEntity(arrange);
         expect(entity.props).toStrictEqual(arrange);
-        expect(entity.uniqueEntityid).toBeInstanceOf(UniqueEntityid);
+        expect(entity.uniqueEntityId).toBeInstanceOf(UniqueEntityId);
         expect(entity.id).not.toBeNull();
         expect(uuidValidate(entity.id)).toBeTruthy();
     });
 
     it("should accept a valid uuid", () => {
         const arrange = { prop1: "prop1 value", prop2: 10 };
-        const uniqueEntityid = new UniqueEntityid();
-        const entity = new StubEntity(arrange, uniqueEntityid);
-        expect(entity.uniqueEntityid).toBeInstanceOf(UniqueEntityid);
-        expect(entity.id).toBe(uniqueEntityid.value);
+        const uniqueEntityId = new UniqueEntityId();
+        const entity = new StubEntity(arrange, uniqueEntityId);
+        expect(entity.uniqueEntityId).toBeInstanceOf(UniqueEntityId);
+        expect(entity.id).toBe(uniqueEntityId.value);
     });
 
     it("should convert a entity to a JavaScript Object", () => {
         const arrange = { prop1: "prop1 value", prop2: 10 };
-        const uniqueEntityid = new UniqueEntityid();
-        const entity = new StubEntity(arrange, uniqueEntityid);
+        const uniqueEntityId = new UniqueEntityId();
+        const entity = new StubEntity(arrange, uniqueEntityId);
 
         expect(entity.toJSON()).toStrictEqual({
             id: entity.id,
